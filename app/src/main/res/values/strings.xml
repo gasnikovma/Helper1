@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">Helper</string>
+    <string name="email_address">Email Address</string>
+    <string name="title">Helper</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="fpassword">Forgot Password?</string>
+    <string name="register">Register now</string>
+    <string name="fullname">Full name</string>
+    <string name="age">Age</string>
+    <string name="resetpas">Reset password</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="current_calls">Current calls</string>
+    <string name="types_of_calls">Types of calls</string>
+    <string name="settings_and_info">Settings and Info</string>
+    <string name="email_address_info">Email address:</string>
+    <string name="full_name_info">Full name: </string>
+</resources>

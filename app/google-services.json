@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1006636483759",
+    "project_id": "lycivr",
+    "storage_bucket": "lycivr.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1006636483759:android:ed50857437cd735e81405a",
+        "android_client_info": {
+          "package_name": "app.gasnikov.helper"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1006636483759-0dfbj0jbt75kvj23rqp7gs1cheg5qft0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVQhlBknhfO3sXKr2xMGjBfUGRhiX6wJI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1006636483759-0dfbj0jbt75kvj23rqp7gs1cheg5qft0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
