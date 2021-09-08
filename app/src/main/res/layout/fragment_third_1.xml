@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+
+    >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/mainactivity"
+        android:orientation="vertical">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_weight="3"
+        android:layout_height="0dp"
+        android:layout_marginTop="20dp"
+        android:id="@+id/email"
+        android:text="@string/email_address_info"
+        android:textStyle="bold"
+
+        android:textSize="25sp"
+        android:layout_marginLeft="10dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:id="@+id/yemail"
+        android:textStyle="italic"
+
+        android:textSize="25sp"
+        android:layout_marginLeft="10dp"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:id="@+id/fullname"
+        android:text="@string/full_name_info"
+        android:textStyle="bold"
+        android:layout_marginLeft="10dp"
+
+        android:textSize="25sp"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:id="@+id/yfullname"
+        android:layout_weight="3"
+        android:textStyle="italic"
+        android:layout_marginLeft="10dp"
+        android:textSize="25sp"
+/>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:layout_marginLeft="10dp"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/blood_type_2"
+            android:text="@string/bt"
+            android:textStyle="bold"
+
+            android:textSize="25sp"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/blood_type_3"
+            android:textStyle="italic"
+            android:layout_marginLeft="20dp"
+
+            android:textSize="25sp"
+            />
+    </LinearLayout>
+    <LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="0dp"
+        android:layout_weight="3"
+    android:layout_marginLeft="10dp"
+    android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/rh_factor_2"
+            android:text="@string/rf"
+            android:textStyle="bold"
+
+            android:textSize="25sp"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/rh_factor_3"
+            android:textStyle="italic"
+
+            android:layout_marginLeft="20dp"
+            android:textSize="25sp"
+            />
+</LinearLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:id="@+id/cd_2"
+        android:layout_weight="3"
+        android:layout_marginLeft="10dp"
+        android:text="@string/cd"
+        android:textStyle="bold"
+
+        android:textSize="25sp"
+        />
+        <ScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:id="@+id/cd_3"
+        android:layout_weight="7"
+        android:layout_marginLeft="10dp"
+        android:textStyle="italic"
+
+        android:textSize="25sp"
+        />
+        </ScrollView>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:id="@+id/ar_2"
+        android:layout_weight="3"
+        android:text="@string/ad"
+        android:layout_marginLeft="10dp"
+        android:textStyle="bold"
+
+        android:textSize="25sp"
+        />
+        <ScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:id="@+id/ar_3"
+        android:layout_weight="7"
+        android:layout_marginLeft="10dp"
+        android:textStyle="italic"
+        android:textSize="25sp"
+        />
+        </ScrollView>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="5"
+        android:layout_marginBottom="20dp"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/signout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/logout"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:background="@drawable/rounded_button"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="50dp"
+            android:textColor="@color/white"
+            android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/settings"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:text="@string/settings"
+            android:background="@drawable/rounded_button"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="10dp"
+            android:textColor="@color/white"
+            android:textSize="20sp" />
+
+
+    </LinearLayout>
+    </LinearLayout>
+</ScrollView>
+
+
+
+
+
+
+
+
+
+
+
+
+

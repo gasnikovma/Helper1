@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -18,6 +19,7 @@ public class FPassword extends AppCompatActivity implements View.OnClickListener
     private EditText email;
     private Button resetpassword;
     FirebaseAuth mauth;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +29,7 @@ public class FPassword extends AppCompatActivity implements View.OnClickListener
         resetpassword=(Button) findViewById(R.id.resetpasssword);
         resetpassword.setOnClickListener(this);
         mauth=FirebaseAuth.getInstance();
+        progressBar=findViewById(R.id.progressBar);
     }
     public void onBackPressed(){
         try{
@@ -55,14 +58,17 @@ public class FPassword extends AppCompatActivity implements View.OnClickListener
             email.setError("Please enter valid email");
             return;
         }
+        progressBar.setVisibility(View.VISIBLE);
         mauth.sendPasswordResetEmail(nemail).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful()){
                     Toast.makeText(FPassword.this, "Check your email address to reset your password", Toast.LENGTH_LONG).show();
+                    progressBar.setVisibility(View.GONE);
                 }
                 else {
                     Toast.makeText(FPassword.this, "Unsuccessful, try again", Toast.LENGTH_LONG).show();
+                    progressBar.setVisibility(View.GONE);
                 }
             }
         });

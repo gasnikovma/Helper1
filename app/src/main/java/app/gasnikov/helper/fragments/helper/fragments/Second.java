@@ -1,14 +1,14 @@
-package app.gasnikov.helper.fragments;
+package app.gasnikov.helper.fragments.helper.fragments;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.fragment.app.Fragment;
+
 import app.gasnikov.helper.R;
+
 public class Second extends Fragment {
 
 

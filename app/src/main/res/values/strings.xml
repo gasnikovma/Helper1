@@ -2,18 +2,85 @@
     <string name="app_name">Helper</string>
     <string name="email_address">Email Address</string>
     <string name="title">Helper</string>
+    <string name="bt">Blood type:</string>
     <string name="password">Password</string>
     <string name="login">Login</string>
     <string name="fpassword">Forgot Password?</string>
     <string name="register">Register now</string>
     <string name="fullname">Full name</string>
     <string name="age">Age</string>
+    <string name="incident">Incident</string>
     <string name="resetpas">Reset password</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="current_calls">Current calls</string>
-    <string name="types_of_calls">Types of calls</string>
+    <string name="types_of_calls">Dashboard</string>
+    <string name="rf">Rh factor:</string>
+    <string name="cd">Chronic diseases:</string>
+    <string name="ad">Allergic reactions:</string>
     <string name="settings_and_info">Settings and Info</string>
     <string name="email_address_info">Email address:</string>
     <string name="full_name_info">Full name: </string>
+    <string name="logout">Logout</string>
+    <string name="real">Real lifeguard call</string>
+    <string name="test">Test call</string>
+    <string name="settings">Edit</string>
+    <string name="accident">Road accident</string>
+    <string name="fault">Fainting</string>
+    <string name="heart">Heart attack</string>
+    <string name="motto">Dont leave each other in trouble</string>
+    <string name="bone">Body part injury</string>
+    <string name="tree">Tree fall</string>
+    <string name="another">Another incident</string>
+    <string-array name="blood_type">
+        <item>I (0)</item>
+        <item>II (A)</item>
+        <item>III (B)</item>
+        <item>IV (AB)</item>
+    </string-array>
+    <string-array name="rh_factor">
+        <item>Rh+</item>
+        <item>Rh-</item>
+
+    </string-array>
+    <string name="chronic_diseases">The presence of chronic diseases</string>
+    <string name="allergic_reactions">The presence of allergic reactions</string>
+    <string-array name="chronic_diseases">
+
+        <item>Cancer</item>
+
+        <item>Arthritis</item>
+        <item>Asthma</item>
+        <item>Diabetes</item>
+        <item>COPD</item>
+        <item>Alzheimer</item>
+        <item>Autism</item>
+        <item>Visual impairment</item>
+        <item>Cerebral palsy</item>
+        <item>Hepatitis</item>
+        <item>Epilepsy</item>
+        <item>HIV/AIDS</item>
+        <item>Hypertension</item>
+        <item>Mental disorder</item>
+        <item>Migraine</item>
+        <item>Multiple sclerosis</item>
+        <item>Narcolepsy</item>
+        <item>Parkinson</item>
+        <item>Periodontal</item>
+    </string-array>
+    <string-array name="allergic_reactions">
+        <item>Itch</item>
+        <item>Urticaria</item>
+        <item>Angioedema</item>
+        <item>Serum sickness</item>
+        <item>Anaphylactic shock</item>
+
+        <item>Rhinitis</item>
+        <item>Dermatitis</item>
+        <item>Lupus erythematosus</item>
+        <item>Hay fever</item>
+
+
+    </string-array>
+    <string name="save">Save</string>
+
 </resources>

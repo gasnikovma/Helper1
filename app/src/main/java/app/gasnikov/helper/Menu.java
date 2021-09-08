@@ -1,26 +1,31 @@
 package app.gasnikov.helper;
 
-import androidx.annotation.NonNull;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
-import androidx.fragment.app.FragmentManager;
+
 import androidx.fragment.app.FragmentTransaction;
+
+
 import android.os.Bundle;
-import android.view.MenuItem;
 
 
-import com.google.android.material.bottomnavigation.BottomNavigationItemView;
+
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import app.gasnikov.helper.fragments.First;
-import app.gasnikov.helper.fragments.Second;
-import app.gasnikov.helper.fragments.Third;
+import app.gasnikov.helper.fragments.helper.fragments.First;
+import app.gasnikov.helper.fragments.helper.fragments.Second;
+import app.gasnikov.helper.fragments.helper.fragments.Third;
+
 
 public class Menu extends AppCompatActivity {
     Fragment first=new First();
     Fragment second=new Second();
     Fragment third=new Third();
+
+
+
 
 
 
@@ -52,6 +57,7 @@ public class Menu extends AppCompatActivity {
                         return true;
                     case R.id.settings:
                         change(third);
+
                         return true;
                 }
                 return false;
