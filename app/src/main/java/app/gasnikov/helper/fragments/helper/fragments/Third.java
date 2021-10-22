@@ -20,6 +20,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import app.gasnikov.helper.MainActivity;
+import app.gasnikov.helper.Menu2;
 import app.gasnikov.helper.R;
 import app.gasnikov.helper.Settings;
 import app.gasnikov.helper.User;
@@ -31,6 +32,7 @@ public class Third extends Fragment {
     private TextView email, fullname,blood_type,rh_factor,cd,ar;
     private Button logout;
     private Button set;
+    private Button ia;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
@@ -45,6 +47,7 @@ public class Third extends Fragment {
         set=(Button)v.findViewById(R.id.settings);
         uid = user.getUid();
         email=(TextView) v.findViewById(R.id.yemail);
+        ia=(Button)v.findViewById(R.id.ia);
         fullname=(TextView) v.findViewById(R.id.yfullname);
         blood_type=(TextView)v.findViewById(R.id.blood_type_3);
         rh_factor=(TextView)v.findViewById(R.id.rh_factor_3);
@@ -59,6 +62,15 @@ public class Third extends Fragment {
             public void onClick(View v) {
                 FirebaseAuth.getInstance().signOut();
                 Intent intent = new Intent(getActivity(), MainActivity.class);
+                startActivity(intent);
+
+            }
+        });
+        ia.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(getActivity(), Menu2.class);
                 startActivity(intent);
 
             }

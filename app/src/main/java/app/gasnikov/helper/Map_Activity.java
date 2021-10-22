@@ -25,6 +25,7 @@ import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -39,19 +40,28 @@ import android.provider.Settings;
 import android.util.Log;
 
 import android.view.KeyEvent;
+import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.model.TypeFilter;
+import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -61,42 +71,77 @@ import com.google.firebase.firestore.GeoPoint;
 
 import java.io.IOException;
 import java.util.ArrayList;
+
+import java.util.Arrays;
 import java.util.List;
 
-import javax.microedition.khronos.egl.EGLDisplay;
 
 public class Map_Activity extends AppCompatActivity {
     private Boolean lp = false;
-    private EditText search;
+
+
     private static final int L_P_REQUEST_CODE = 12345;
+
     public static final int PERMISSIONS_REQUEST_ENABLE_GPS = 9003;
     public static final int ERROR_DIALOG_REQUEST = 9001;
+
     private static final String TAG = "MapActivity";
     private FusedLocationProviderClient fusedLocationProviderClient;
     private GoogleMap map;
+    private ImageView getloc;
     private UserLocation userLocation;
-
     FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-
-
-
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_map);
-        search = (EditText) findViewById(R.id.input);
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        //search = (EditText) findViewById(R.id.input);
+        getloc=(ImageView)findViewById(R.id.curloc);
+        fusedLocationProviderClient =LocationServices.getFusedLocationProviderClient(this);
+        Places.initialize(getApplicationContext(),"AIzaSyCFWCLLJDeJ7_mSoDWc_mzq3HmupHs7yrQ");
+
+
+        AutocompleteSupportFragment autocompleteSupportFragment= (AutocompleteSupportFragment) getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+
+        autocompleteSupportFragment.setPlaceFields(Arrays.asList(Place.Field.ADDRESS, Place.Field.LAT_LNG,Place.Field.ID,Place.Field.NAME));
+        autocompleteSupportFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(@NonNull Place place) {
+                Log.i(TAG, "Place: " + place.getAddress() + ", " + place.getLatLng()+", " +place.getId()+", "+ place.getName());
+                Place a =place;
+                LatLng b=a.getLatLng();
+                LatLng l=new LatLng(b.latitude,b.longitude);
+                map.animateCamera(CameraUpdateFactory.newLatLngZoom(l,15));
+                MarkerOptions markerOptions = new MarkerOptions();
+                markerOptions.position(l).title(getResources().getString(R.string.incident));
+                map.clear();
+                map.addMarker(markerOptions);
+            }
+
+            @Override
+            public void onError(@NonNull Status status) {
+                Log.i(TAG,"ERROR"+status);
+            }
+        });
+        getloc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getDeviceLocation();
+            }
+        });
+
+
+
+
 
 
     }
-    private void startLocationService(){
+    /*private void startLocationService(){
         if(!isLocationServiceRunning()){
             Intent serviceIntent = new Intent(this, LocationService.class);
-//        this.startService(serviceIntent);
+            if (android.os.Build.VERSION.SDK_INT >= 26){
 
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O){
+                this.startForegroundService(serviceIntent);
 
-                Map_Activity.this.startForegroundService(serviceIntent);
             }else{
                 startService(serviceIntent);
             }
@@ -113,7 +158,7 @@ public class Map_Activity extends AppCompatActivity {
         }
         Log.d(TAG, "isLocationServiceRunning: location service is not running.");
         return false;
-    }
+    }*/
     //step one(retrieve the user detailes)
     private void getUser(){
         if(userLocation==null){
@@ -128,11 +173,12 @@ public class Map_Activity extends AppCompatActivity {
                         getDeviceLocation();
 
                     }
+
                 }
             });
         }
         else {
-            getDeviceLocation();
+        //getDeviceLocation();
         }
     }
     //step two(getting the gps coord)
@@ -146,12 +192,22 @@ public class Map_Activity extends AppCompatActivity {
                         Location curloc=(Location)task.getResult();
                         LatLng latLng=new LatLng(curloc.getLatitude(),curloc.getLongitude());
                         map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,15));
-
+                        MarkerOptions markerOptions = new MarkerOptions();
+                        markerOptions.position(latLng).title(getResources().getString(R.string.incident));
+                        map.clear();
+                        map.addMarker(markerOptions);
                         GeoPoint geoPoint = new GeoPoint(curloc.getLatitude(),curloc.getLongitude());
                         userLocation.setGeo_point(geoPoint);
                         userLocation.setTime_stamp(null);
                         saveUserLocation();
-                        startLocationService();
+                        Intent serviceIntent = new Intent(Map_Activity.this,LocationService.class);
+                        if (android.os.Build.VERSION.SDK_INT >= 26){
+
+                            Map_Activity.this.startForegroundService(serviceIntent);
+
+                        }else{
+                            startService(serviceIntent);
+                        }
 
                     }
                     else{
@@ -172,31 +228,6 @@ public class Map_Activity extends AppCompatActivity {
 
     }
 
-    private void init() {
-        search.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH || actionId == EditorInfo.IME_ACTION_DONE || event.getAction() == KeyEvent.ACTION_DOWN || event.getAction() == KeyEvent.KEYCODE_ENTER) {
-                    String searchstr = search.getText().toString();
-                    Geocoder geocoder = new Geocoder(Map_Activity.this);
-                    List<Address> list = new ArrayList<>();
-                    try {
-                        list = geocoder.getFromLocationName(searchstr, 1);
-
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    if (list.size() > 0) {
-                        Address address = list.get(0);
-                        // Toast.makeText(Map_Activity.this,address.toString(),Toast.LENGTH_LONG).show();
-                    }
-
-
-                }
-                return false;
-            }
-        });
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -248,7 +279,7 @@ public class Map_Activity extends AppCompatActivity {
 
                     map.setMyLocationEnabled(true);
                     map.getUiSettings().setMyLocationButtonEnabled(false);
-                    init();
+                   // init();
                     map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                         @Override
                         public void onMapClick(@NonNull LatLng latLng) {
@@ -342,6 +373,7 @@ public class Map_Activity extends AppCompatActivity {
         }
         return false;
     }
+
 
 
 

@@ -29,19 +29,25 @@ public class UserLocation {
         this.geo_point = geo_point;
     }
 
-    public Date getTime_stamp() {
-        return time_stamp;
-    }
+
 
     public void setTime_stamp(Date time_stamp) {
         this.time_stamp = time_stamp;
+    }
+
+
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Date getTime_stamp() {
+        return time_stamp;
     }
 
     public User getUser() {
         return user;
     }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
+
 }

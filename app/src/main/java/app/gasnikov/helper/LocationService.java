@@ -39,8 +39,8 @@ public class LocationService extends Service {
     private static final String TAG = "LocationService";
 
     private FusedLocationProviderClient mFusedLocationClient;
-    private final static long UPDATE_INTERVAL = 4000;
-    private final static long FASTEST_INTERVAL = 2000;
+    private final static long UPDATE_INTERVAL = 10000;
+    private final static long FASTEST_INTERVAL = 5000;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     User user;
 
@@ -75,54 +75,54 @@ public class LocationService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(TAG, "onStartCommand: called.");
+
         getLocation();
         return START_NOT_STICKY;
     }
 
     private void getLocation() {
 
-        // ---------------------------------- LocationRequest ------------------------------------
+
         // Create the location request to start receiving updates
         LocationRequest mLocationRequestHighAccuracy = new LocationRequest();
         mLocationRequestHighAccuracy.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         mLocationRequestHighAccuracy.setInterval(UPDATE_INTERVAL);
         mLocationRequestHighAccuracy.setFastestInterval(FASTEST_INTERVAL);
-        // new Google API SDK v11 uses getFusedLocationProviderClient(this)
+
         if (ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             stopSelf();
             return;
-        }
-        Log.d(TAG, "getLocation: getting location information.");
-       mFusedLocationClient.requestLocationUpdates(mLocationRequestHighAccuracy, new LocationCallback() {
-                    @Override
-                    public void onLocationResult(LocationResult locationResult) {
+        } else
+            mFusedLocationClient.requestLocationUpdates(mLocationRequestHighAccuracy, new LocationCallback() {
+                        @Override
+                        public void onLocationResult(LocationResult locationResult) {
 
-                        Log.d(TAG, "onLocationResult: got location result.");
+                            Log.d(TAG, "onLocationResult: got location result.");
 
-                        Location location = locationResult.getLastLocation();
+                            Location location = locationResult.getLastLocation();
 
-                        if (location != null) {
-                            DocumentReference u=db.collection("Users").document(FirebaseAuth.getInstance().getCurrentUser().getUid());
-                            u.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                    if (task.isSuccessful()) {
-                                        user = task.getResult().toObject(User.class);
+                            if (location != null) {
+                                DocumentReference u = db.collection("Users").document(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                                u.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                        if (task.isSuccessful()) {
+                                            user = task.getResult().toObject(User.class);
+                                        }
                                     }
-                                }
-                            });
+                                });
 
-                            GeoPoint geoPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
-                            UserLocation userLocation = new UserLocation(geoPoint, null, user);
-                            saveUserLocation(userLocation);
+                                GeoPoint geoPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
+                                UserLocation userLocation = new UserLocation(geoPoint, null, user);
+                                saveUserLocation(userLocation);
+                            }
                         }
-                    }
-                },
-                Looper.myLooper()); // Looper.myLooper tells this to repeat forever until thread is destroyed
-    }
+                    },
+                    Looper.myLooper()); // Looper.myLooper tells this to repeat forever until thread is destroyed
+        }
+
 
     private void saveUserLocation(final UserLocation userLocation){
 
@@ -135,15 +135,11 @@ public class LocationService extends Service {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     if(task.isSuccessful()){
-                        Log.d(TAG, "onComplete: \ninserted user location into database." +
-                                "\n latitude: " + userLocation.getGeo_point().getLatitude() +
-                                "\n longitude: " + userLocation.getGeo_point().getLongitude());
+
                     }
                 }
             });
         }catch (NullPointerException e){
-            Log.e(TAG, "saveUserLocation: User instance is null, stopping location service.");
-            Log.e(TAG, "saveUserLocation: NullPointerException: "  + e.getMessage() );
             stopSelf();
         }
 

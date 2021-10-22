@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,45 +19,56 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
 
 public class Registration extends AppCompatActivity implements View.OnClickListener {
     private FirebaseAuth mauth;
     private Button registernow;
     private ProgressBar progressBar;
-    private String nbt="";
-    private String nrh="";
-    private String ncd="";
-    private String nar="";
+    private String nbt = "";
+    private String nrh = "";
+    private String ncd = "";
+    private String nar = "";
+    private String id;
     public static String nemail;
     public static String nfullname;
+    private static final String TAG = "Registration";
+    public static ArrayList<String>usernames;
 
-    private EditText fullname,email,password;
+    private EditText fullname, email, password;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
         setContentView(R.layout.activity_registration);
-        mauth=FirebaseAuth.getInstance();
-        progressBar=(ProgressBar)findViewById(R.id.progressBar);
-        registernow=(Button)findViewById(R.id.registeruser);
+        mauth = FirebaseAuth.getInstance();
+
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        registernow = (Button) findViewById(R.id.registeruser);
         registernow.setOnClickListener(this);
-        fullname=(EditText)findViewById(R.id.fullname);
-        email=(EditText)findViewById(R.id.email);
-        password=(EditText)findViewById(R.id.password);
+        fullname = (EditText) findViewById(R.id.fullname);
+        email = (EditText) findViewById(R.id.email);
+        password = (EditText) findViewById(R.id.password);
 
 
     }
-    public void onBackPressed(){
 
-        try{
+    public void onBackPressed() {
+
+        try {
             FirebaseAuth.getInstance().signOut();
-            Intent intent = new Intent(Registration.this,MainActivity.class);
+            Intent intent = new Intent(Registration.this, MainActivity.class);
             startActivity(intent);
             finish();
-        }
-        catch(Exception e){
+        } catch (Exception e) {
 
         }
 
@@ -64,74 +76,81 @@ public class Registration extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        if(v.getId()==R.id.registeruser){
+        if (v.getId() == R.id.registeruser) {
             registeruser();
 
         }
 
 
     }
-    private void registeruser(){
-         nemail=email.getText().toString().trim();
-        String npassword=password.getText().toString().trim();
-         nfullname=fullname.getText().toString().trim();
-        if(nemail.isEmpty()||nfullname.isEmpty()||npassword.isEmpty()){
+
+    private void registeruser() {
+        nemail = email.getText().toString().trim();
+        String npassword = password.getText().toString().trim();
+        nfullname = fullname.getText().toString().trim();
+        if (nemail.isEmpty() || nfullname.isEmpty() || npassword.isEmpty()) {
             Toast.makeText(Registration.this, "All fields must be filled", Toast.LENGTH_LONG).show();
             return;
         }
 
-        if(!android.util.Patterns.EMAIL_ADDRESS.matcher(nemail).matches()){
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(nemail).matches()) {
             email.setError("Please enter valid email");
             return;
         }
-        if(password.length()<6){
+        if (password.length() < 6) {
             password.setError("Password must be of 6 characters at least");
             return;
         }
-        progressBar.setVisibility(View.VISIBLE);
-        mauth.createUserWithEmailAndPassword(nemail,npassword)
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        //если был успешно зарегистрирован
-                        if(task.isSuccessful()){
-                            User user =new User(nfullname,nemail,nbt,nrh,ncd,nar);
+/*      if(usernames.contains(nfullname)){
+            fullname.setError("This username is already taken");
+            return;
+        }*/
+            progressBar.setVisibility(View.VISIBLE);
+            mauth.createUserWithEmailAndPassword(nemail, npassword)
+                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            //если был успешно зарегистрирован
+                            if (task.isSuccessful()) {
+
+                                 id= mauth.getCurrentUser().getUid();
 
 
-
-                            db.collection("Users").document(FirebaseAuth.getInstance().getCurrentUser().getUid()).set(user).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()) {
-                                        Toast.makeText(Registration.this, "You have been successfully registered!", Toast.LENGTH_LONG).show();
-                                        progressBar.setVisibility(View.GONE);
-                                        FirebaseAuth.getInstance().signOut();
-                                        Intent intent = new Intent(Registration.this,MainActivity.class);
-                                        startActivity(intent);
-                                        finish();
+                                User user = new User(nfullname, nemail, nbt, nrh, ncd, nar,id);
 
 
+                                db.collection("Users").document(FirebaseAuth.getInstance().getCurrentUser().getUid()).set(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            Toast.makeText(Registration.this, "You have been successfully registered!", Toast.LENGTH_LONG).show();
+                                          //  usernames.add(nfullname);
 
 
+                                          //Toast.makeText(Registration.this, String.valueOf(usernames.get(0)),Toast.LENGTH_LONG).show();
 
-                                    } else {
-                                        Toast.makeText(Registration.this, "Registration failed!", Toast.LENGTH_LONG).show();
-                                        progressBar.setVisibility(View.GONE);
+                                            progressBar.setVisibility(View.GONE);
+                                            FirebaseAuth.getInstance().signOut();
+                                            Intent intent = new Intent(Registration.this, MainActivity.class);
+                                            startActivity(intent);
+                                            finish();
+
+
+                                        } else {
+                                            Toast.makeText(Registration.this, "Registration failed!", Toast.LENGTH_LONG).show();
+                                            progressBar.setVisibility(View.GONE);
+                                        }
                                     }
-                                }
-                            });
+                                });
+
+                            } else {
+                                Toast.makeText(Registration.this, "Registration failed!", Toast.LENGTH_LONG).show();
+                                progressBar.setVisibility(View.GONE);
+                            }
 
                         }
-                        else{
-                            Toast.makeText(Registration.this, "Registration failed!", Toast.LENGTH_LONG).show();
-                            progressBar.setVisibility(View.GONE);
-                        }
-
-                    }
-                });
+                    });
 
 
-
-
+        }
     }
-}

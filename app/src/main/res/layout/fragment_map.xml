@@ -19,24 +19,29 @@
         android:layout_marginLeft="10dp"
         android:elevation="10dp"
         android:background="#fff">
-        <ImageView
-            android:layout_width="15dp"
-            android:layout_height="15dp"
-            android:id="@+id/search"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
-            android:src="@drawable/ic_search"/>
-        <EditText
+
+
+        <fragment android:id="@+id/autocomplete_fragment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_centerVertical="true"
-            android:layout_toRightOf="@id/search"
-            android:textSize="15sp"
-            android:textColor="#000"
-            android:id="@+id/input"
-            android:background="@null"
-            android:imeOptions="actionSearch"/>
+            android:layout_height="wrap_content"
+            android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
+            />
+
+
+
     </RelativeLayout>
+    <ImageView
+        android:id="@+id/curloc"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_below="@id/rl"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/ic_location"
+        android:scaleType="centerCrop"/>
+
+
 
 
 

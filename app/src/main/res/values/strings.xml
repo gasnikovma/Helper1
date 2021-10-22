@@ -28,9 +28,9 @@
     <string name="fault">Fainting</string>
     <string name="heart">Heart attack</string>
     <string name="motto">Dont leave each other in trouble</string>
-    <string name="bone">Body part injury</string>
+    <string name="bone">Body injury</string>
     <string name="tree">Tree fall</string>
-    <string name="another">Another incident</string>
+    <string name="another">Another</string>
     <string-array name="blood_type">
         <item>I (0)</item>
         <item>II (A)</item>
