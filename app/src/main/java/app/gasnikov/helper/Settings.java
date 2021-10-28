@@ -24,7 +24,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.database.FirebaseDatabase;
+
 
 import java.util.HashMap;
 
@@ -37,7 +38,7 @@ public class Settings extends AppCompatActivity {
     private ArrayAdapter arap1,arap2,arap3,arap4;
     private Button save;
     private ProgressBar progressBar;
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    FirebaseDatabase db = FirebaseDatabase.getInstance();
 
 
 
@@ -135,7 +136,7 @@ public class Settings extends AppCompatActivity {
                 result.put("cd", ncd);
                 result.put("ar", nar);
 
-                db.collection("Users").document(FirebaseAuth.getInstance().getCurrentUser().getUid()).update(result).addOnCompleteListener(new OnCompleteListener<Void>() {
+                db.getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).updateChildren(result).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {

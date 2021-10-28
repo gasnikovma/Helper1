@@ -29,10 +29,12 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.GeoPoint;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+
+import com.google.firebase.database.ValueEventListener;
+
 
 public class LocationService extends Service {
 
@@ -41,7 +43,7 @@ public class LocationService extends Service {
     private FusedLocationProviderClient mFusedLocationClient;
     private final static long UPDATE_INTERVAL = 10000;
     private final static long FASTEST_INTERVAL = 5000;
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    FirebaseDatabase db = FirebaseDatabase.getInstance();
     User user;
 
 
@@ -102,8 +104,26 @@ public class LocationService extends Service {
                             Log.d(TAG, "onLocationResult: got location result.");
 
                             Location location = locationResult.getLastLocation();
-
                             if (location != null) {
+                                db.getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                         user=snapshot.getValue(User.class);
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                    }
+                                });
+
+
+                                LocationModel geoPoint = new LocationModel(location.getLatitude(), location.getLongitude());
+                                UserLocation userLocation = new UserLocation(geoPoint, user);
+                                saveUserLocation(userLocation);
+                            }
+
+                            /*if (location != null) {
                                 DocumentReference u = db.collection("Users").document(FirebaseAuth.getInstance().getCurrentUser().getUid());
                                 u.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                     @Override
@@ -117,7 +137,8 @@ public class LocationService extends Service {
                                 GeoPoint geoPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
                                 UserLocation userLocation = new UserLocation(geoPoint, null, user);
                                 saveUserLocation(userLocation);
-                            }
+                            }*/
+
                         }
                     },
                     Looper.myLooper()); // Looper.myLooper tells this to repeat forever until thread is destroyed
@@ -127,11 +148,8 @@ public class LocationService extends Service {
     private void saveUserLocation(final UserLocation userLocation){
 
         try{
-            DocumentReference locationRef = FirebaseFirestore.getInstance()
-                    .collection("User Locations")
-                    .document(FirebaseAuth.getInstance().getCurrentUser().getUid());
-
-            locationRef.set(userLocation).addOnCompleteListener(new OnCompleteListener<Void>() {
+            db.getReference("User Locations")
+                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(userLocation).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     if(task.isSuccessful()){

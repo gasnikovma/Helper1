@@ -19,10 +19,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
+
+import com.google.firebase.database.FirebaseDatabase;
+
 
 import java.util.ArrayList;
 
@@ -41,7 +40,7 @@ public class Registration extends AppCompatActivity implements View.OnClickListe
     public static ArrayList<String>usernames;
 
     private EditText fullname, email, password;
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    FirebaseDatabase db = FirebaseDatabase.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,10 +100,6 @@ public class Registration extends AppCompatActivity implements View.OnClickListe
             password.setError("Password must be of 6 characters at least");
             return;
         }
-/*      if(usernames.contains(nfullname)){
-            fullname.setError("This username is already taken");
-            return;
-        }*/
             progressBar.setVisibility(View.VISIBLE);
             mauth.createUserWithEmailAndPassword(nemail, npassword)
                     .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -119,16 +114,11 @@ public class Registration extends AppCompatActivity implements View.OnClickListe
                                 User user = new User(nfullname, nemail, nbt, nrh, ncd, nar,id);
 
 
-                                db.collection("Users").document(FirebaseAuth.getInstance().getCurrentUser().getUid()).set(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                db.getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if (task.isSuccessful()) {
                                             Toast.makeText(Registration.this, "You have been successfully registered!", Toast.LENGTH_LONG).show();
-                                          //  usernames.add(nfullname);
-
-
-                                          //Toast.makeText(Registration.this, String.valueOf(usernames.get(0)),Toast.LENGTH_LONG).show();
-
                                             progressBar.setVisibility(View.GONE);
                                             FirebaseAuth.getInstance().signOut();
                                             Intent intent = new Intent(Registration.this, MainActivity.class);
@@ -151,6 +141,5 @@ public class Registration extends AppCompatActivity implements View.OnClickListe
                         }
                     });
 
-
-        }
+            }
     }

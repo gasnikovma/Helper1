@@ -63,17 +63,12 @@ import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.GeoPoint;
-
-
-import java.io.IOException;
-import java.util.ArrayList;
-
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import java.util.Arrays;
-import java.util.List;
+
 
 
 public class Map_Activity extends AppCompatActivity {
@@ -90,7 +85,7 @@ public class Map_Activity extends AppCompatActivity {
     private GoogleMap map;
     private ImageView getloc;
     private UserLocation userLocation;
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    FirebaseDatabase db = FirebaseDatabase.getInstance();
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_map);
@@ -163,23 +158,22 @@ public class Map_Activity extends AppCompatActivity {
     private void getUser(){
         if(userLocation==null){
             userLocation=new UserLocation();
-            DocumentReference user=db.collection("Users").document(FirebaseAuth.getInstance().getCurrentUser().getUid());
-            user.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            db.getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
                 @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if(task.isSuccessful()){
-                        User user=task.getResult().toObject(User.class);
-                        userLocation.setUser(user);
-                        getDeviceLocation();
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    User user=snapshot.getValue(User.class);
+                    userLocation.setUser(user);
+                    getDeviceLocation();
+                }
 
-                    }
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
 
                 }
             });
+
         }
-        else {
-        //getDeviceLocation();
-        }
+
     }
     //step two(getting the gps coord)
     private void getDeviceLocation() {
@@ -196,9 +190,8 @@ public class Map_Activity extends AppCompatActivity {
                         markerOptions.position(latLng).title(getResources().getString(R.string.incident));
                         map.clear();
                         map.addMarker(markerOptions);
-                        GeoPoint geoPoint = new GeoPoint(curloc.getLatitude(),curloc.getLongitude());
+                        LocationModel geoPoint = new LocationModel(curloc.getLatitude(),curloc.getLongitude());
                         userLocation.setGeo_point(geoPoint);
-                        userLocation.setTime_stamp(null);
                         saveUserLocation();
                         Intent serviceIntent = new Intent(Map_Activity.this,LocationService.class);
                         if (android.os.Build.VERSION.SDK_INT >= 26){
@@ -221,8 +214,7 @@ public class Map_Activity extends AppCompatActivity {
     //step three(upload into firestore)
     private void saveUserLocation(){
         if(userLocation!=null){
-            DocumentReference location=db.collection("User Locations").document(FirebaseAuth.getInstance().getCurrentUser().getUid());
-            location.set(userLocation);
+            db.getReference("User Locations").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(userLocation);
 
         }
 

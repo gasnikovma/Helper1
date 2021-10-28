@@ -1,5 +1,6 @@
 package app.gasnikov.helper;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -16,16 +17,16 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 
-import com.google.android.gms.tasks.OnSuccessListener;
 
+
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,7 +34,7 @@ import java.util.List;
 
 public class Message_Activity extends AppCompatActivity {
     private TextView username;
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    FirebaseDatabase db = FirebaseDatabase.getInstance();
 private Toolbar toolbar;
 private Intent intent;
 private ImageButton send;
@@ -53,7 +54,6 @@ private RecyclerView recyclerView;
         txt_send=findViewById(R.id.txt_send);
         recyclerView=findViewById(R.id.recycler_view);
         LinearLayoutManager llm= new LinearLayoutManager(getApplicationContext());
-        
         recyclerView.setLayoutManager(llm);
 
 
@@ -85,19 +85,20 @@ private RecyclerView recyclerView;
             }
         });
 
-        DocumentReference docRef = db.collection("Users").document(uid);
-        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        db.getReference("Users").child(uid).addValueEventListener(new ValueEventListener() {
             @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                User u = documentSnapshot.toObject(User.class);
-                if (u != null) {
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                User u= snapshot.getValue(User.class);
+                if(u!=null){
                     username.setText(u.getFullname());
-
                 }
                 readMsg(FirebaseAuth.getInstance().getCurrentUser().getUid(),uid);
             }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
 
+            }
         });
 
 
@@ -109,35 +110,44 @@ private RecyclerView recyclerView;
 
 
     }
-    private void sendMsg(final String sender,final String receiver,final String message){
+    private void sendMsg( String sender, String receiver, String message){
         HashMap<String,Object> msg=new HashMap<>();
         msg.put("receiver",receiver);
         msg.put("sender",sender);
         msg.put("message",message);
-        db.collection("Chats").document(uid).set(msg);
+        db.getReference().child("Chats").push().setValue(msg);
     }
-    private  void readMsg(String mid,String recid){
+   private  void readMsg(String mid,String yid){
         messageList=new ArrayList<>();
-        db.collection("Chats").addSnapshotListener(new EventListener<QuerySnapshot>() {
+        db.getReference().child("Chats").addValueEventListener(new ValueEventListener() {
             @Override
-            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                if (error != null) {
-                    return;
-                }
-                    messageList.clear();
-                    for (QueryDocumentSnapshot document : value) {
-                        Message message = document.toObject(Message.class);
-                        if ((message.getReceiver().equals(FirebaseAuth.getInstance().getCurrentUser().getUid()) && message.getSender().equals(uid))||(message.getSender().equals(FirebaseAuth.getInstance().getCurrentUser().getUid()) && message.getReceiver().equals(uid))) {
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                messageList.clear();
+                for (DataSnapshot snapshot1 : snapshot.getChildren()) {
+                    Message message = snapshot1.getValue(Message.class);
+                    if(message.getSender()==null){
+                        Toast.makeText(Message_Activity.this,"Ппц",Toast.LENGTH_LONG).show();
+                    }
+                   if (message.getReceiver().equals(mid) && message.getSender().equals(yid) || message.getSender().equals(mid) && message.getReceiver().equals(yid)) {
                             messageList.add(message);
                         }
 
 
+                        messageAdapter = new MessageAdapter(Message_Activity.this, messageList);
+                        recyclerView.setAdapter(messageAdapter);
 
-                    }
-                messageAdapter = new MessageAdapter(getApplicationContext(), messageList);
-                recyclerView.setAdapter(messageAdapter);
 
                 }
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+
+
 
                 });
 

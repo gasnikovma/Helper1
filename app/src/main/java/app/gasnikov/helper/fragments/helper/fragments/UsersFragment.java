@@ -13,18 +13,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
+
+
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.google.protobuf.StringValue;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +35,7 @@ public class UsersFragment extends Fragment {
     private UserAdapter userAdapter;
     private List<User> userList;
 
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    FirebaseDatabase db = FirebaseDatabase.getInstance();
 
 
 
@@ -58,9 +54,30 @@ public class UsersFragment extends Fragment {
 
 
     private void readusername() {
+        db.getReference("Users").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                userList.clear();
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    User u=dataSnapshot.getValue(User.class);
+
+                    if (u!=null && !FirebaseAuth.getInstance().getCurrentUser().getUid().equals(u.getId())) {
+                        userList.add(u);
+                    }
+                }
+                userAdapter=new UserAdapter(getContext(),userList);
+                recyclerView.setAdapter(userAdapter);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
 
-         db.collection("Users").get()
+       /*db.collection("Users").get()
                  .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                      @Override
                      public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -83,7 +100,7 @@ public class UsersFragment extends Fragment {
 
                      }
 
-            });
+            });*/
 
     }
 }

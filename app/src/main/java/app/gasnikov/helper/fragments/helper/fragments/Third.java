@@ -10,20 +10,22 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnSuccessListener;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
-
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import app.gasnikov.helper.MainActivity;
 import app.gasnikov.helper.Menu2;
 import app.gasnikov.helper.R;
 import app.gasnikov.helper.Settings;
 import app.gasnikov.helper.User;
+import app.gasnikov.helper.UserAdapter;
+
 public class Third extends Fragment {
 
     private FirebaseUser user;
@@ -33,10 +35,7 @@ public class Third extends Fragment {
     private Button logout;
     private Button set;
     private Button ia;
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-
-
+    FirebaseDatabase db = FirebaseDatabase.getInstance();
 
     @Override
     public View onCreateView (LayoutInflater inflater, ViewGroup container,
@@ -88,41 +87,10 @@ public class Third extends Fragment {
 
             }
         });
-        DocumentReference docRef = db.collection("Users").document(uid);
-        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        db.getReference("Users").child(uid).addValueEventListener(new ValueEventListener() {
             @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                User u = documentSnapshot.toObject(User.class);
-                if (u != null) {
-                    String nemail = u.email;
-                    String nfullname = u.fullname;
-                    String nblood_type = u.blood_type;
-                    String nrh_factor = u.rh_factor;
-                    String ncd = u.cd;
-                    String nar = u.ar;
-                    email.setText(nemail);
-                    fullname.setText(nfullname);
-                    blood_type.setText(nblood_type);
-                    rh_factor.setText(nrh_factor);
-                    cd.setText(ncd);
-                    ar.setText(nar);
-                }
-            }
-        });
-
-
-
-        return v;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        DocumentReference docRef1 = db.collection("Users").document(uid);
-        docRef1.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                User u = documentSnapshot.toObject(User.class);
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                User u=snapshot.getValue(User.class);
                 if (u != null) {
                     String nemail = u.email;
                     String nfullname = u.fullname;
@@ -140,8 +108,60 @@ public class Third extends Fragment {
                 else {
                     Toast.makeText(getActivity(),"Try again",Toast.LENGTH_LONG).show();
                 }
+
+
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
+
+
+
+
+        return v;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+       /* db.getReference("Users").child(uid).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                User u=snapshot.getValue(User.class);
+                if (u != null) {
+                    String nemail = u.email;
+                    String nfullname = u.fullname;
+                    String nblood_type = u.blood_type;
+                    String nrh_factor = u.rh_factor;
+                    String ncd = u.cd;
+                    String nar = u.ar;
+                    email.setText(nemail);
+                    fullname.setText(nfullname);
+                    blood_type.setText(nblood_type);
+                    rh_factor.setText(nrh_factor);
+                    cd.setText(ncd);
+                    ar.setText(nar);
+                }
+                else {
+                    Toast.makeText(getActivity(),"Try again",Toast.LENGTH_LONG).show();
+                }
+
+
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });*/
+
 
 
 
