@@ -1,9 +1,12 @@
 package app.gasnikov.helper;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.HashMap;
 import java.util.Map;
 
-public class User {
+public class User implements Parcelable {
     public String fullname,email,blood_type,rh_factor,cd,ar,id;
     public User(){
 
@@ -16,8 +19,31 @@ public class User {
         this.rh_factor=rh_factor;
         this.cd=cd;
         this.ar=ar;
+
     }
 
+
+    protected User(Parcel in) {
+        fullname = in.readString();
+        email = in.readString();
+        blood_type = in.readString();
+        rh_factor = in.readString();
+        cd = in.readString();
+        ar = in.readString();
+        id = in.readString();
+    }
+
+    public static final Creator<User> CREATOR = new Creator<User>() {
+        @Override
+        public User createFromParcel(Parcel in) {
+            return new User(in);
+        }
+
+        @Override
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
 
     public String getFullname() {
         return fullname;
@@ -25,5 +51,65 @@ public class User {
 
     public String getId() {
         return id;
+    }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(fullname);
+        dest.writeString(email);
+        dest.writeString(blood_type);
+        dest.writeString(rh_factor);
+        dest.writeString(cd);
+        dest.writeString(ar);
+    }
+
+    public String getBlood_type() {
+        return blood_type;
+    }
+
+    public void setBlood_type(String blood_type) {
+        this.blood_type = blood_type;
+    }
+
+    public String getRh_factor() {
+        return rh_factor;
+    }
+
+    public void setRh_factor(String rh_factor) {
+        this.rh_factor = rh_factor;
+    }
+
+    public String getCd() {
+        return cd;
+    }
+
+    public void setCd(String cd) {
+        this.cd = cd;
+    }
+
+    public String getAr() {
+        return ar;
+    }
+
+    public void setAr(String ar) {
+        this.ar = ar;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

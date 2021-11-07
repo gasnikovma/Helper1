@@ -37,7 +37,7 @@ public class Registration extends AppCompatActivity implements View.OnClickListe
     public static String nemail;
     public static String nfullname;
     private static final String TAG = "Registration";
-    public static ArrayList<String>usernames;
+
 
     private EditText fullname, email, password;
     FirebaseDatabase db = FirebaseDatabase.getInstance();
@@ -111,7 +111,7 @@ public class Registration extends AppCompatActivity implements View.OnClickListe
                                  id= mauth.getCurrentUser().getUid();
 
 
-                                User user = new User(nfullname, nemail, nbt, nrh, ncd, nar,id);
+                               User user = new User(nfullname, nemail, nbt, nrh, ncd, nar,id);
 
 
                                 db.getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {

@@ -1,7 +1,9 @@
 package app.gasnikov.helper.fragments.helper.fragments;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +21,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 
+import app.gasnikov.helper.LocationService;
 import app.gasnikov.helper.MainActivity;
 import app.gasnikov.helper.Menu2;
 import app.gasnikov.helper.R;
@@ -34,7 +37,6 @@ public class Third extends Fragment {
     private TextView email, fullname,blood_type,rh_factor,cd,ar;
     private Button logout;
     private Button set;
-    private Button ia;
     FirebaseDatabase db = FirebaseDatabase.getInstance();
 
     @Override
@@ -44,9 +46,8 @@ public class Third extends Fragment {
         user = FirebaseAuth.getInstance().getCurrentUser();
 
         set=(Button)v.findViewById(R.id.settings);
-        uid = user.getUid();
+            uid = user.getUid();
         email=(TextView) v.findViewById(R.id.yemail);
-        ia=(Button)v.findViewById(R.id.ia);
         fullname=(TextView) v.findViewById(R.id.yfullname);
         blood_type=(TextView)v.findViewById(R.id.blood_type_3);
         rh_factor=(TextView)v.findViewById(R.id.rh_factor_3);
@@ -59,21 +60,18 @@ public class Third extends Fragment {
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                /*getActivity().stopService(
+                        new Intent(getContext(), LocationService.class));
                 FirebaseAuth.getInstance().signOut();
                 Intent intent = new Intent(getActivity(), MainActivity.class);
-                startActivity(intent);
+                startActivity(intent);*/
+                dialog();
+
 
             }
         });
-        ia.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-                Intent intent = new Intent(getActivity(), Menu2.class);
-                startActivity(intent);
-
-            }
-        });
         set.setOnClickListener(new View.OnClickListener(){
 
             @Override
@@ -125,6 +123,29 @@ public class Third extends Fragment {
 
         return v;
     }
+    private void dialog(){
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setCancelable(false);
+        builder.setTitle("Are you sure you want to log out of your account?");
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+
+            }
+        });
+        builder.setPositiveButton("Log out", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                getActivity().stopService(
+                        new Intent(getContext(), LocationService.class));
+                FirebaseAuth.getInstance().signOut();
+                Intent intent = new Intent(getActivity(), MainActivity.class);
+                startActivity(intent);
+
+            }
+        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
 
     @Override
     public void onResume() {

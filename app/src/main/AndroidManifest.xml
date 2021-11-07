@@ -2,10 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="app.gasnikov.helper">
-
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <!--
+         The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
+         Google Maps Android API v2, but you must specify either coarse or fine
+         location permissions for the "MyLocation" functionality.
+    -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
@@ -17,18 +20,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Helper"
         tools:ignore="Instantiatable">
-        <activity android:name=".Message_Activity"></activity>
-        <activity android:name=".Menu2" />
+        <activity android:name=".User_Data"
+            android:screenOrientation="portrait">
 
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="${MAPS_API_KEY}" />
-
-        <activity android:name=".Map_Activity" />
-        <activity android:name=".Settings" />
-        <activity android:name=".FPassword" />
-        <activity android:name=".Menu" />
-        <activity android:name=".Registration" />
+        </activity>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -37,10 +32,50 @@
             </intent-filter>
         </activity>
 
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="${MAPS_API_KEY}" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/helper" />
+
+        <activity android:name=".Message_Activity"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name=".Message_Activity" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".Menu2"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Map_Activity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Settings"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".MapsActivity"
+            android:label="@string/title_activity_maps"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".FPassword"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Menu"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Registration"
+            android:screenOrientation="portrait"/>
+
         <service
             android:name=".LocationService"
             android:enabled="true"
             android:exported="true" />
+        <service
+            android:name=".Notifications.MyFirebaseMessagingService"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
 
         <meta-data
             android:name="preloaded_fonts"

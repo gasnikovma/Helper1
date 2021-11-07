@@ -76,31 +76,5 @@ public class UsersFragment extends Fragment {
             }
         });
 
-
-       /*db.collection("Users").get()
-                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                     @Override
-                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                         if (task.isSuccessful()) {
-                             userList.clear();
-                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                 User u = document.toObject(User.class);
-                                 if (u!=null && !FirebaseAuth.getInstance().getCurrentUser().getUid().equals(u.getId())) {
-                                     userList.add(u);
-
-
-
-                                 }
-                             }
-                         } else {
-                             Toast.makeText(getActivity(),"Try again",Toast.LENGTH_LONG).show();
-                         }
-                         userAdapter=new UserAdapter(getContext(),userList);
-                         recyclerView.setAdapter(userAdapter);
-
-                     }
-
-            });*/
-
     }
 }

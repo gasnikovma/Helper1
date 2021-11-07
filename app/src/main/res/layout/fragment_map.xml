@@ -40,6 +40,18 @@
         android:layout_marginTop="10dp"
         android:src="@drawable/ic_location"
         android:scaleType="centerCrop"/>
+    <Button
+        android:id="@+id/help"
+        android:layout_width="340dp"
+        android:layout_height="50dp"
+        android:background="@drawable/button_2"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="25dp"
+        android:text="@string/help"
+        android:textColor="@color/white"
+        android:textSize="16dp"
+
+        android:layout_alignParentBottom="true"/>
 
 
 

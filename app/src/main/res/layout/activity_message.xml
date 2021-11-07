@@ -12,13 +12,13 @@
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:background="@color/login"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:layout_height="30dp"
-                android:layout_width="30dp"
-                android:src="@mipmap/ic_launcher"
+            android:theme="@style/ThemeOverlay.AppCompat.DayNight.ActionBar">
+            <ImageView
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_centerVertical="true"
                 android:id="@+id/profile"/>
 
 
@@ -26,6 +26,7 @@
         <TextView
             android:id="@+id/username"
             android:layout_width="wrap_content"
+
             android:layout_height="wrap_content"
             android:layout_marginStart="25dp"
             android:textColor="@color/white"
@@ -65,6 +66,12 @@
 
 
     </RelativeLayout>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/user_list_container">
+
+    </FrameLayout>
 
 
 

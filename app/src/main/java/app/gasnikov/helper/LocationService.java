@@ -29,6 +29,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -41,7 +42,7 @@ public class LocationService extends Service {
     private static final String TAG = "LocationService";
 
     private FusedLocationProviderClient mFusedLocationClient;
-    private final static long UPDATE_INTERVAL = 10000;
+    private final static long UPDATE_INTERVAL = 8000;
     private final static long FASTEST_INTERVAL = 5000;
     FirebaseDatabase db = FirebaseDatabase.getInstance();
     User user;
@@ -104,7 +105,7 @@ public class LocationService extends Service {
                             Log.d(TAG, "onLocationResult: got location result.");
 
                             Location location = locationResult.getLastLocation();
-                            if (location != null) {
+                            if (location != null && FirebaseAuth.getInstance().getCurrentUser()!=null) {
                                 db.getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot snapshot) {

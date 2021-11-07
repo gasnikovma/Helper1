@@ -61,7 +61,7 @@
         android:layout_height="70dp"
         android:id="@+id/registeruser"
         android:layout_marginTop="30dp"
-        android:backgroundTint="@color/login"
+
         android:text="@string/register"
         android:textColor="@color/white"
         android:textSize="22dp"

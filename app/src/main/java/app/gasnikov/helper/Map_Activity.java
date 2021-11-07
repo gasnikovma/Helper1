@@ -20,6 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 
 
@@ -45,6 +46,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -65,14 +67,27 @@ import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
+
 import java.util.Arrays;
 
+import app.gasnikov.helper.Notifications.ApiService;
+import app.gasnikov.helper.Notifications.Client;
+import app.gasnikov.helper.Notifications.Data;
+import app.gasnikov.helper.Notifications.Response;
+import app.gasnikov.helper.Notifications.Sender;
+import app.gasnikov.helper.Notifications.Token;
+import retrofit2.Call;
+import retrofit2.Callback;
 
 
 public class Map_Activity extends AppCompatActivity {
     private Boolean lp = false;
+    private Button button;
 
 
     private static final int L_P_REQUEST_CODE = 12345;
@@ -84,19 +99,21 @@ public class Map_Activity extends AppCompatActivity {
     private FusedLocationProviderClient fusedLocationProviderClient;
     private GoogleMap map;
     private ImageView getloc;
+    ApiService apiService;
     private UserLocation userLocation;
+    private MarkerOptions markerOptions;
+    private LocationModel locinc;
     FirebaseDatabase db = FirebaseDatabase.getInstance();
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_map);
+
         //search = (EditText) findViewById(R.id.input);
         getloc=(ImageView)findViewById(R.id.curloc);
+        button=(Button)findViewById(R.id.help);
         fusedLocationProviderClient =LocationServices.getFusedLocationProviderClient(this);
         Places.initialize(getApplicationContext(),"AIzaSyCFWCLLJDeJ7_mSoDWc_mzq3HmupHs7yrQ");
-
-
         AutocompleteSupportFragment autocompleteSupportFragment= (AutocompleteSupportFragment) getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
-
         autocompleteSupportFragment.setPlaceFields(Arrays.asList(Place.Field.ADDRESS, Place.Field.LAT_LNG,Place.Field.ID,Place.Field.NAME));
         autocompleteSupportFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
@@ -106,10 +123,11 @@ public class Map_Activity extends AppCompatActivity {
                 LatLng b=a.getLatLng();
                 LatLng l=new LatLng(b.latitude,b.longitude);
                 map.animateCamera(CameraUpdateFactory.newLatLngZoom(l,15));
-                MarkerOptions markerOptions = new MarkerOptions();
+                 markerOptions = new MarkerOptions();
                 markerOptions.position(l).title(getResources().getString(R.string.incident));
                 map.clear();
                 map.addMarker(markerOptions);
+
             }
 
             @Override
@@ -123,26 +141,75 @@ public class Map_Activity extends AppCompatActivity {
                 getDeviceLocation();
             }
         });
+        apiService= Client.getClient("https://fcm.googleapis.com/").create(ApiService.class);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                locinc=new LocationModel(markerOptions.getPosition().latitude,markerOptions.getPosition().longitude);
+                db.getReference("Incidents").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(locinc);
+                sendnotify();
+                Intent intent=new Intent(Map_Activity.this,Menu2.class);
+                startActivity(intent);
+            }
+
+        });
 
 
 
 
 
 
+    }
+    private void sendnotify() {
+        DatabaseReference tokens =db.getReference("Tokens");
+        Query query1=tokens.orderByKey().endBefore(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        Query query=tokens.orderByKey().startAfter(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        notify(query);
+        notify(query1);
+    }
+    private void notify(Query query){
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot snapshot1:snapshot.getChildren()){
+                    Token token=snapshot1.getValue(Token.class);
+                    Data data=new Data(FirebaseAuth.getInstance().getCurrentUser().getUid(),R.mipmap.ic_launcher,"Help","New incident");
+                    Sender sender=new Sender(data,token.getToken());
+                    apiService.sendnotification(sender).enqueue(new Callback<Response>() {
+                        @Override
+                        public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
+                            if(response.code()==235){
+                                if(response.body().success!=1){
+                                    Toast.makeText(Map_Activity.this,"Fail",Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Response> call, Throwable t) {
+
+                        }
+                    });
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
     /*private void startLocationService(){
         if(!isLocationServiceRunning()){
             Intent serviceIntent = new Intent(this, LocationService.class);
             if (android.os.Build.VERSION.SDK_INT >= 26){
-
                 this.startForegroundService(serviceIntent);
-
             }else{
                 startService(serviceIntent);
             }
         }
     }
-
     private boolean isLocationServiceRunning() {
         ActivityManager manager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)){
@@ -186,7 +253,7 @@ public class Map_Activity extends AppCompatActivity {
                         Location curloc=(Location)task.getResult();
                         LatLng latLng=new LatLng(curloc.getLatitude(),curloc.getLongitude());
                         map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,15));
-                        MarkerOptions markerOptions = new MarkerOptions();
+                         markerOptions = new MarkerOptions();
                         markerOptions.position(latLng).title(getResources().getString(R.string.incident));
                         map.clear();
                         map.addMarker(markerOptions);
@@ -228,7 +295,7 @@ public class Map_Activity extends AppCompatActivity {
             case PERMISSIONS_REQUEST_ENABLE_GPS:{
                 if(lp){
                     initMap();
-                   getUser();
+                    getUser();
                 }
                 else{
                     getLocationPermission();
@@ -271,7 +338,7 @@ public class Map_Activity extends AppCompatActivity {
 
                     map.setMyLocationEnabled(true);
                     map.getUiSettings().setMyLocationButtonEnabled(false);
-                   // init();
+                    // init();
                     map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                         @Override
                         public void onMapClick(@NonNull LatLng latLng) {
@@ -372,21 +439,19 @@ public class Map_Activity extends AppCompatActivity {
 
 
 
-        @Override
-        protected void onResume() {
-            super.onResume();
-            if(checkMapServices()){
-                if(lp){
-                    initMap();
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(checkMapServices()){
+            if(lp){
+                initMap();
 
-                    getUser();
+                getUser();
 
-                }
-                else{
-                    getLocationPermission();
-                }
+            }
+            else{
+                getLocationPermission();
             }
         }
     }
-
-
+}

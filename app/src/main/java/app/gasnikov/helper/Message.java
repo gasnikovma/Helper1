@@ -4,16 +4,25 @@ public class Message {
     private String sender;
     private String receiver;
     private String message;
+    private boolean seen;
 
-    public Message(String sender, String receiver, String message) {
+    public Message(String sender, String receiver, String message, boolean seen) {
         this.sender = sender;
         this.receiver = receiver;
         this.message = message;
+        this.seen=seen;
     }
     public Message() {
 
     }
 
+    public boolean isSeen() {
+        return seen;
+    }
+
+    public void setSeen(boolean seen) {
+        this.seen = seen;
+    }
 
     public String getSender() {
         return sender;

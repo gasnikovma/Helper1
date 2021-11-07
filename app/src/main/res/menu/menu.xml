@@ -4,7 +4,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/types_of_calls"
-
         android:icon="@drawable/first"
         android:title="@string/types_of_calls"
         />
