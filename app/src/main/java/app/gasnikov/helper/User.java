@@ -3,16 +3,14 @@ package app.gasnikov.helper;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.HashMap;
-import java.util.Map;
 
 public class User implements Parcelable {
     public String fullname,email,blood_type,rh_factor,cd,ar,id;
-    public boolean isrescued;
     public User(){
 
     }
-    public User(String fullname, String email,String blood_type,String rh_factor,String cd,String ar,String id,boolean isrescued){
+
+    public User(String fullname, String email,String blood_type,String rh_factor,String cd,String ar,String id){
         this.blood_type=blood_type;
         this.fullname=fullname;
         this.email=email;
@@ -20,7 +18,6 @@ public class User implements Parcelable {
         this.rh_factor=rh_factor;
         this.cd=cd;
         this.ar=ar;
-        this.isrescued=isrescued;
 
     }
 

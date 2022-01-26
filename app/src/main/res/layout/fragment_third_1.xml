@@ -193,6 +193,18 @@
 
 
     </LinearLayout>
+        <Button
+            android:id="@+id/calls"
+            android:layout_marginTop="40dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/finish"
+            android:background="@drawable/rounded_button"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="40dp"
+            android:textColor="@color/white"
+            android:textSize="20sp"/>
     </LinearLayout>
 </ScrollView>
 
